@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-"""Defines the BaseModel class."""
+"""This script is the base model"""
 
 import uuid
-from models import storage
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
