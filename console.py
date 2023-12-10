@@ -160,13 +160,15 @@ class HBNBCommand(cmd.Cmd):
             "all": self.do_all,
             "count": self.do_count,
             "show": self.do_show,
-            "destroy": self.do_destroy
+            "destroy": self.do_destroy,
+            "update": self.do_update
         }
 
         if '.' in args and '(' in args and ')' in args:
             cls = args.split('.')
             cnd = cls[1].split('(')
             arg = cnd[1].split(')')[0]
+            arg = arg.replace(",", "").replace("\"", "")
             if cnd[0] in commands.keys():
                 return commands[cnd[0]]("{} {}".format(cls[0], arg))
         print("*** Unknown syntax: {}".format(args))
