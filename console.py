@@ -142,18 +142,33 @@ class HBNBCommand(cmd.Cmd):
             else:
                 obj.__dict__[args[2]] = args[3]
 
+    def do_count(self, args):
+        """
+        Usage: count <class> or <class>.count()
+        Counts the number of instances of a class.
+        """
+        args = args.split()
+        count = 0
+        for obj in storage.all().values():
+            if obj.__class__.__name__ == args[0]:
+                count += 1
+        print(count)
+
     def default(self, args):
         """Function called when a command given might be invalid"""
         commands = {
-            "all": self.do_all
+            "all": self.do_all,
+            "count": self.do_count,
+            "show": self.do_show,
+            "destroy": self.do_destroy
         }
 
         if '.' in args and '(' in args and ')' in args:
             cls = args.split('.')
             cnd = cls[1].split('(')
             arg = cnd[1].split(')')[0]
-            if cls[1][:-2] in commands.keys() and cnd[0] in commands.keys():
-                return commands[cnd[0]](cls[0] + arg)
+            if cnd[0] in commands.keys():
+                return commands[cnd[0]]("{} {}".format(cls[0], arg))
         print("*** Unknown syntax: {}".format(args))
         return False
 
