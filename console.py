@@ -2,6 +2,8 @@
 """Defines the HBnB console."""
 
 import cmd
+import re
+
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -96,7 +98,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """
-        Usage: all or all <class>
+        Usage: all or all <class> or <class>.all()
         Display string representations of all instances of a given class.
         If no class is specified, displays all instantiated objects.
         """
@@ -139,6 +141,21 @@ class HBNBCommand(cmd.Cmd):
                 obj.__dict__[args[2]] = val_type(args[3])
             else:
                 obj.__dict__[args[2]] = args[3]
+
+    def default(self, args):
+        """Function called when a command given might be invalid"""
+        commands = {
+            "all": self.do_all
+        }
+
+        if '.' in args and '(' in args and ')' in args:
+            cls = args.split('.')
+            cnd = cls[1].split('(')
+            arg = cnd[1].split(')')[0]
+            if cls[1][:-2] in commands.keys() and cnd[0] in commands.keys():
+                return commands[cnd[0]](cls[0] + arg)
+        print("*** Unknown syntax: {}".format(args))
+        return False
 
 
 if __name__ == '__main__':
