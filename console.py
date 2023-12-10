@@ -121,7 +121,15 @@ class HBNBCommand(cmd.Cmd):
         Updates an instance based on the class name and id
         by adding or updating attribute.
         """
+        curly_braces = (args.find("{"), args.find("}"))
+        temp = ""
+        if curly_braces != (-1, -1) and curly_braces[0] < curly_braces[1]:
+            temp = args[curly_braces[0]: curly_braces[1] + 1]
+            args = args[:curly_braces[0]]
+
         args = args.split()
+        if temp != "":
+            args.insert(2, temp)
         objects_dict = storage.all()
         if len(args) < 1:
             print("** class name missing **")
@@ -133,15 +141,27 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
         elif len(args) < 3:
             print("** attribute name missing **")
-        elif len(args) < 4:
+        elif len(args) < 4 and type(eval(args[2])) != dict:
             print("** value missing **")
-        else:
+        elif len(args) == 4:
             obj = objects_dict["{}.{}".format(args[0], args[1])]
-            if args[2] in obj.__dict__.keys():
-                val_type = type(obj.__dict__[args[2]])
-                obj.__dict__[args[2]] = val_type(args[3])
+            class_dict = obj.__dict__
+            if args[2] in class_dict.keys():
+                val_type = type(class_dict[args[2]])
+                class_dict[args[2]] = val_type(args[3])
             else:
-                obj.__dict__[args[2]] = args[3]
+                class_dict[args[2]] = args[3]
+            storage.save()
+        elif type(eval(args[2])) == dict:
+            obj = objects_dict["{}.{}".format(args[0], args[1])]
+            class_dict = obj.__dict__
+            for k, v in eval(args[2]).items():
+                if (k in class_dict.keys() and
+                        type(class_dict[k]) in {str, int, float}):
+                    class_dict[k] = type(class_dict[k])(v)
+                else:
+                    class_dict[k] = v
+            storage.save()
 
     def do_count(self, args):
         """
@@ -169,7 +189,12 @@ class HBNBCommand(cmd.Cmd):
             cls = args.split('.')
             cnd = cls[1].split('(')
             arg = cnd[1].split(')')[0]
-            arg = arg.replace(",", "").replace("\"", "")
+            curly_braces = (arg.find("{"), args.find("}"))
+            temp = ""
+            if curly_braces != (-1, -1) and curly_braces[0] < curly_braces[1]:
+                temp = arg[curly_braces[0]: curly_braces[1] + 1]
+                arg = arg[:curly_braces[0]]
+            arg = arg.replace(",", "").replace("\"", "") + temp
             if cnd[0] in commands.keys():
                 return commands[cnd[0]]("{} {}".format(cls[0], arg))
         print("*** Unknown syntax: {}".format(args))
