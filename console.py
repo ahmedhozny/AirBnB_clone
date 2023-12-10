@@ -61,7 +61,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, args):
         """
-        Usage: show <class> <id>
+        Usage: show <class> <id> or <class name>.show(<id>).
         Shows a string representation of instance and print its id.
         """
         args = args.split()
@@ -79,7 +79,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, args):
         """
-        Usage: destroy <class> <id>
+        Usage: destroy <class> <id> or <class name>.destroy(<id>)
         Deletes an instance based on the class name and id.
         """
         args = args.split()
@@ -117,6 +117,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, args):
         """
         Usage: Usage: update <class> <id> <attribute_name> <attribute_value>
+            or <class name>.update(<id>, <attribute name>, <attribute value>)
         Updates an instance based on the class name and id
         by adding or updating attribute.
         """
