@@ -141,8 +141,11 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
         elif len(args) < 3:
             print("** attribute name missing **")
-        elif len(args) < 4 and type(eval(args[2])) != dict:
-            print("** value missing **")
+        elif len(args) < 4:
+            try:
+                eval(args[2])
+            except NameError:
+                print("** value missing **")
         elif len(args) == 4:
             obj = objects_dict["{}.{}".format(args[0], args[1])]
             class_dict = obj.__dict__
